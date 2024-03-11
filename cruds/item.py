@@ -1,51 +1,6 @@
-from enum import Enum
+from fastapi import Body
 from typing import Optional
-from schemas import ItemCreate
-
-
-class ItemInfo(Enum):
-    def __init__(self, id, param):
-        self.id = id
-        self.param = param
-
-    #idとparamを連結した文字列を返却
-    @property
-    def tag(self):
-        return "{}:{}".format(self.id, self.param)
-    
-    #全ての列挙型メンバーを取得
-    @classmethod
-    def members_as_list(cls):
-        # Order dictionary -> list
-        return [*cls.__members__.values()]
-    
-    # idを指定して取得
-    @classmethod
-    def get_by_id(cls, id: int):
-        for c in cls.members_as_list():
-            if id == c.id:
-                return c
-        # default
-        return None
-
-
-#商品カテゴリー(大分類)
-class ItemCategory(ItemInfo):
-    BOOK = (1, "本・コミック・雑誌")
-    DVD = (2, "DVD・ミュージック・ゲーム")
-    ELECTRICAL = (3, "電化製品")
-    PC = (4, "パソコン関連")
-    FOOD = (5, "食品・飲料")
-    DRUG = (6, "薬")
-    CLOTHES = (7, "服・服飾雑貨")
-    OTHER = (8, "その他")
-
-
-#商品ステータス
-class ItemStatus(ItemInfo):
-    ON_SALE = (1, "セール中")
-    SOLD_OUT = (2, "売り切れ")
-    ORIGINAL_PRICE = (3, "定価")
+from schemas import ItemCategory, ItemStatus, ItemCreate, ItemUpdate
 
 
 #商品
@@ -69,9 +24,9 @@ class Item:
 
 #テスト用アイテム
 items = [
-    Item(1, "Windows PC", 100000, "デスクトップPCです。", ItemCategory.PC.param, ItemStatus.ON_SALE),
-    Item(2, "スラムダンク10巻", 500, "漫画です。", ItemCategory.BOOK.param, ItemStatus.ORIGINAL_PRICE),
-    Item(3, "眼鏡", 7000, "レディース用メガネフレームです。", ItemCategory.CLOTHES.param, ItemStatus.SOLD_OUT),
+    Item(1, "Windows PC", 100000, "デスクトップPCです。", ItemCategory.PC, ItemStatus.ON_SALE),
+    Item(2, "スラムダンク10巻", 500, "漫画です。", ItemCategory.BOOK, ItemStatus.ORIGINAL_PRICE),
+    Item(3, "眼鏡", 7000, "レディース用メガネフレームです。", ItemCategory.CLOTHES, ItemStatus.SOLD_OUT),
 ]
 
 
@@ -108,19 +63,17 @@ def create(item_create: ItemCreate):
     return new_item
 
 
-def update(id: int, item_update):
+def update(id: int, item_update: ItemUpdate):
     for item in items:
         if item.id == id:
-            item.name = item_update.get("name", item.name)
-            item.price = item_update.get("price", item.price)
-            item.description = item_update.get("description", item.description)
+            item.name = item.name if item_update.name is None else item_update.name
+            item.price = item.price if item_update.price is None else item_update.price
+            item.description = item.description if item_update.description is None else item_update.description
 
-            category = item_update.get("category")
-            if category is not None:
-                item.category = ItemCategory.get_by_id(category)
-            status = item_update.get("status")
-            if status is not None:
-                item.status = ItemStatus.get_by_id(status)  
+            category_number = item.category.id if item_update.category is None else item_update.category
+            item.category = ItemCategory.get_by_id(category_number)
+            status_number = item.status.id if item_update.status is None else item_update.status
+            item.status = ItemStatus.get_by_id(status_number)
             return item
     return None
 
