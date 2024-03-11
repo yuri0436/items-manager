@@ -1,26 +1,54 @@
-from email.policy import default
 from enum import Enum
 from typing import Optional
+from schemas import ItemCreate
 
 
-#商品のカテゴリ(大分類)
-class ItemCategory(Enum):
-    BOOK = "本・コミック・雑誌"
-    DVD = "DVD・ミュージック・ゲーム"
-    ELECTRICAL = "電化製品"
-    PC = "パソコン関連"
-    FOOD = "食品・飲料"
-    DRUG = "薬"
-    CLOTHES = "服・服飾雑貨"
-    OTHER = "その他"
+class ItemInfo(Enum):
+    def __init__(self, id, param):
+        self.id = id
+        self.param = param
+
+    #idとparamを連結した文字列を返却
+    @property
+    def tag(self):
+        return "{}:{}".format(self.id, self.param)
+    
+    #全ての列挙型メンバーを取得
+    @classmethod
+    def members_as_list(cls):
+        # Order dictionary -> list
+        return [*cls.__members__.values()]
+    
+    # idを指定して取得
+    @classmethod
+    def get_by_id(cls, id: int):
+        for c in cls.members_as_list():
+            if id == c.id:
+                return c
+        # default
+        return None
 
 
-class ItemStatus(Enum):
-    ON_SALE = "セール中"
-    SOLD_OUT = "売り切れ"
-    ORIGINAL_PRICE = "定価"
+#商品カテゴリー(大分類)
+class ItemCategory(ItemInfo):
+    BOOK = (1, "本・コミック・雑誌")
+    DVD = (2, "DVD・ミュージック・ゲーム")
+    ELECTRICAL = (3, "電化製品")
+    PC = (4, "パソコン関連")
+    FOOD = (5, "食品・飲料")
+    DRUG = (6, "薬")
+    CLOTHES = (7, "服・服飾雑貨")
+    OTHER = (8, "その他")
 
 
+#商品ステータス
+class ItemStatus(ItemInfo):
+    ON_SALE = (1, "セール中")
+    SOLD_OUT = (2, "売り切れ")
+    ORIGINAL_PRICE = (3, "定価")
+
+
+#商品
 class Item:
     def __init__(
         self,
@@ -39,10 +67,11 @@ class Item:
         self.status = status
 
 
+#テスト用アイテム
 items = [
-    Item(1, "Windows PC", 100000, "デスクトップPCです。", ItemCategory.PC, ItemStatus.ON_SALE),
-    Item(2, "スラムダンク10巻", 500, "漫画です。", ItemCategory.BOOK, ItemStatus.ORIGINAL_PRICE),
-    Item(3, "眼鏡", 7000, "レディース用メガネフレームです。", ItemCategory.CLOTHES, ItemStatus.SOLD_OUT),
+    Item(1, "Windows PC", 100000, "デスクトップPCです。", ItemCategory.PC.param, ItemStatus.ON_SALE),
+    Item(2, "スラムダンク10巻", 500, "漫画です。", ItemCategory.BOOK.param, ItemStatus.ORIGINAL_PRICE),
+    Item(3, "眼鏡", 7000, "レディース用メガネフレームです。", ItemCategory.CLOTHES.param, ItemStatus.SOLD_OUT),
 ]
 
 
@@ -66,14 +95,14 @@ def find_by_name(name: str):
     return filtered_items
 
 
-def create(item_create):
+def create(item_create: ItemCreate):
     new_item = Item(
         len(items) + 1,
-        item_create.get("name"),
-        item_create.get("price"),
-        item_create.get("description"),
-        ItemCategory[item_create.get("category")],
-        ItemStatus.ORIGINAL_PRICE
+        item_create.name,
+        item_create.price,
+        item_create.description,
+        ItemCategory.get_by_id(item_create.category),
+        ItemStatus.get_by_id(item_create.status)
     )
     items.append(new_item)
     return new_item
@@ -85,8 +114,13 @@ def update(id: int, item_update):
             item.name = item_update.get("name", item.name)
             item.price = item_update.get("price", item.price)
             item.description = item_update.get("description", item.description)
-            item.category = ItemCategory[item_update.get("category", item.category)]
-            item.status = ItemStatus[item_update.get("status", item.status)]
+
+            category = item_update.get("category")
+            if category is not None:
+                item.category = ItemCategory.get_by_id(category)
+            status = item_update.get("status")
+            if status is not None:
+                item.status = ItemStatus.get_by_id(status)  
             return item
     return None
 
