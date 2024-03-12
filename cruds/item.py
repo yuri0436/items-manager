@@ -34,7 +34,7 @@ def update(db: Session, id: int, item_update: ItemUpdate):
     item.description = item.description if item_update.description is None else item_update.description
     item.category = item.category if item_update.category is None else item_update.category
     item.status = item.status if item_update.status is None else item_update.status
-    db.add(item)
+    # db.add(item)
     db.commit()
     return item
 
