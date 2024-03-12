@@ -12,6 +12,7 @@
         "pydantic",
         "sessionmaker",
         "sqlalchemy",
-        "starlette"
+        "starlette",
+        "urandom"
     ]
 }

@@ -23,7 +23,6 @@ class ItemStatus(Enum):
     ORIGINAL_PRICE = "ORIGINAL_PRICE"
 
 
-
 class ItemCreate(BaseModel):
     name: str = Field(min_length=2, max_length=20, examples=["PC"])
     price: int = Field(gt=0, examples=[100000])
@@ -52,3 +51,16 @@ class ItemResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
+class UserCreate(BaseModel):
+    username: str = Field(min_length=2, examples=["user1"])
+    password: str = Field(min_length=8, examples=["test1234"])
+
+
+class UserResponse(BaseModel):
+    id: int = Field(gt=0, examples=[1])
+    username: str = Field(min_length=2, examples=["user1"])
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
