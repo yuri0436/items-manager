@@ -1,7 +1,7 @@
 from datetime import datetime
-from heapq import nlargest
 from schemas import ItemCategory, ItemStatus
-from sqlalchemy import Column, Integer, String, Enum, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, Enum, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
 from database import Base
 
 class Item(Base):
@@ -15,6 +15,9 @@ class Item(Base):
     status = Column(Enum(ItemStatus), nullable=False, default=ItemStatus.ORIGINAL_PRICE)
     created_at = Column(DateTime, default=datetime.now())
     updated_at = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+    user = relationship("User", back_populates="items")
 
 
 class User(Base):
@@ -26,3 +29,5 @@ class User(Base):
     salt = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now())
     updated_at = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    items = relationship("Item", back_populates="user")

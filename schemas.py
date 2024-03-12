@@ -48,6 +48,7 @@ class ItemResponse(BaseModel):
     status: ItemStatus = Field(examples=["ON_SALE"])
     created_at: datetime
     updated_at: datetime
+    user_id: int
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -69,3 +70,8 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class DecodedToken(BaseModel):
+    username: str
+    user_id: int

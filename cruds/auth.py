@@ -2,15 +2,21 @@ from datetime import datetime, timedelta
 import hashlib
 import base64
 import os
+from typing import Annotated
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
 from pickletools import pylong
-from jose import jwt
+from jose import jwt, JWSError
 from sqlalchemy.orm import Session
-from schemas import UserCreate
+from schemas import UserCreate, DecodedToken
 from models import User
 
 
 ALGORITHM = "HS256"
 SECRET_KEY = "c41bbdc76dfb9341a37b6cee828f36780eee629206a8004b5f1d2b0df5c653ff"
+
+oath2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
 
 def create_user(db: Session, user_create: UserCreate):
     salt = base64.b64encode(os.urandom(32))
@@ -47,3 +53,15 @@ def create_access_token(username: str, user_id: int, expires_delta: timedelta):
     expires = datetime.now() + expires_delta
     payload = {"sub": username, "id": user_id, "exp": expires}
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def get_current_user(token: Annotated[str, Depends(oath2_scheme)]):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        username = payload.get("sub")
+        user_id = payload.get("id")
+        if username is None or user_id is None:
+            return None
+        return DecodedToken(username=username, user_id=user_id)
+    except JWSError:
+        raise JWSError
