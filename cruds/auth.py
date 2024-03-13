@@ -5,7 +5,6 @@ import os
 from typing import Annotated
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
-from pickletools import pylong
 from jose import jwt, JWSError
 from sqlalchemy.orm import Session
 from schemas import UserCreate, DecodedToken
@@ -43,7 +42,7 @@ def authenticate_user(db: Session, username: str, password: str):
     hashed_password = hashlib.pbkdf2_hmac(
         "sha256", password.encode(), user.salt.encode(), 1000
         ).hex()
-    if user.password != hashed_password:
+    if user.password != hashed_password: # type: ignore
         return None
     
     return user

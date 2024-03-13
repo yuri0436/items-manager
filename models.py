@@ -17,7 +17,7 @@ class Item(Base):
     created_at = Column(DateTime, default=datetime.now())
     updated_at = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-
+    #リレーション：Userクラスのitemsプロパティに関連付ける
     user = relationship("User", back_populates="items")
 
 
@@ -30,5 +30,5 @@ class User(Base):
     salt = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now())
     updated_at = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
-
+    #リレーション：Itemクラスのuserプロパティに関連付ける
     items = relationship("Item", back_populates="user")

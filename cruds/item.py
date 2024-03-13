@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from fastapi import Body
 from schemas import ItemCreate, ItemUpdate
 from models import Item
 

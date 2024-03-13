@@ -1,6 +1,5 @@
 from datetime import timedelta
 from typing import Annotated
-from winreg import DeleteKey
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -26,5 +25,5 @@ async def login(db: DbDependency, form_data: FormDependency):
     if not user:
         raise HTTPException(status_code=401, detail="Incorrect username or password")
     
-    token = auth_cruds.create_access_token(user.username, user.id, timedelta(minutes=20))
+    token = auth_cruds.create_access_token(user.username, user.id, timedelta(minutes=20)) # type: ignore
     return {"access_token": token, "token_type": "bearer"}
