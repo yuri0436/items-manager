@@ -1,16 +1,13 @@
 {
-    "python.analysis.typeCheckingMode": "off",
-    "python.analysis.autoImportCompletions": true,
     "cSpell.words": [
         "autoflush",
         "DBAPI",
         "fastapi",
-        "itemcategory",
-        "itemstatus",
         "ondelete",
         "onupdate",
         "poolclass",
         "pydantic",
+        "repr",
         "sessionmaker",
         "sqlalchemy",
         "starlette",

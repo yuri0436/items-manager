@@ -29,6 +29,7 @@ class ItemCreate(BaseModel):
     description: Optional[str] = Field(None, examples=["2023年の夏モデルです。"])
     category: ItemCategory = Field(examples=["BOOK, DVD, ELECTRICAL, PC, FOOD, DRUG, CLOTHES, OTHER"])
     status: ItemStatus = Field(examples=["ON_SALE, SOLD_OUT, ORIGINAL_PRICE"])
+    stock: int = Field(gt=0, examples=[100])
 
 
 class ItemUpdate(BaseModel):
@@ -37,7 +38,7 @@ class ItemUpdate(BaseModel):
     description: Optional[str] = Field(None, examples=["2023年の夏モデルです。"])
     category: Optional[ItemCategory] = Field(None, examples=["BOOK, DVD, ELECTRICAL, PC, FOOD, DRUG, CLOTHES, OTHER"])
     status: Optional[ItemStatus] = Field(None, examples=["ON_SALE, SOLD_OUT, ORIGINAL_PRICE"])
-
+    stock: Optional[int] = Field(None, gt=0, examples=[100])
 
 class ItemResponse(BaseModel):
     id: int = Field(gt=0, examples=[1])
@@ -46,6 +47,7 @@ class ItemResponse(BaseModel):
     description: Optional[str] = Field(None, examples=["2023年の夏モデルです。"])
     category: ItemCategory = Field(examples=["PC"])
     status: ItemStatus = Field(examples=["ON_SALE"])
+    stock: int = Field(gt=0, examples=[100])
     created_at: datetime
     updated_at: datetime
     user_id: int
