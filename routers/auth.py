@@ -25,5 +25,5 @@ async def login(db: DbDependency, form_data: FormDependency):
     if not user:
         raise HTTPException(status_code=401, detail="Incorrect username or password")
     
-    token = auth_cruds.create_access_token(user.username, user.id, timedelta(minutes=20)) # type: ignore
+    token = auth_cruds.create_access_token(user.username, user.id, timedelta(minutes=20))
     return {"access_token": token, "token_type": "bearer"}

@@ -29,7 +29,7 @@ def session_fixture():
     #セッションを作成
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     db = SessionLocal()
-    #初期データを作成
+    #テストデータを作成
     try:
         item1 = Item(
             name="PC1", price=100000, description="test1", category=ItemCategory.PC, 

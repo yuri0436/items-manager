@@ -27,8 +27,8 @@ class ItemCreate(BaseModel):
     name: str = Field(min_length=2, max_length=20, examples=["PC"])
     price: int = Field(gt=0, examples=[100000])
     description: Optional[str] = Field(None, examples=["2023年の夏モデルです。"])
-    category: ItemCategory = Field(examples=["BOOK, DVD, ELECTRICAL, PC, FOOD, DRUG, CLOTHES, OTHER"])
-    status: ItemStatus = Field(examples=["ON_SALE, SOLD_OUT, ORIGINAL_PRICE"])
+    category: ItemCategory = Field(examples=["PC"])
+    status: ItemStatus = Field(examples=["ON_SALE"])
     stock: int = Field(gt=0, examples=[100])
 
 
@@ -36,8 +36,8 @@ class ItemUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=2, max_length=20, examples=["PC"])
     price: Optional[int] = Field(None, gt=0, examples=[100000])
     description: Optional[str] = Field(None, examples=["2023年の夏モデルです。"])
-    category: Optional[ItemCategory] = Field(None, examples=["BOOK, DVD, ELECTRICAL, PC, FOOD, DRUG, CLOTHES, OTHER"])
-    status: Optional[ItemStatus] = Field(None, examples=["ON_SALE, SOLD_OUT, ORIGINAL_PRICE"])
+    category: Optional[ItemCategory] = Field(None, examples=["PC"])
+    status: Optional[ItemStatus] = Field(None, examples=["ON_SALE"])
     stock: Optional[int] = Field(None, gt=0, examples=[100])
 
 class ItemResponse(BaseModel):
